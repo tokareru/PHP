@@ -1,0 +1,97 @@
+<?php
+session_start();
+require "connect.php";
+require "mat.php";
+$name = $_SESSION["username"];
+$koef = 1;
+$bots = get_bots($link);
+foreach ($bots as $bot1) {
+}
+$sql14 = "UPDATE game.statsbots,perems SET clicks = clicks+1 where login='$name'";
+mysqli_query($link, $sql14);
+$_SESSION["botid"] = $bot1[botid];
+for ($i = 1; $i <= 10; $i++) {
+    if ($_SESSION["botid"] == $i) {
+        $id = "hpbot" . $i;
+    }
+}
+$sql =
+    "UPDATE game.statsbots,perems SET " .
+    $id .
+    " = " .
+    $id .
+    "-(attack*" .
+    $koef .
+    ") where botid=idbot and login='$name'";
+mysqli_query($link, $sql);
+$sql1 = "UPDATE game.statsbots,perems SET hp1 = hp1-damage where botid=idbot and login='$name'";
+mysqli_query($link, $sql1);
+$bots = get_bots($link);
+foreach ($bots as $bot1) {
+}
+if ($bot1[clicks] >= 30) {
+    $clickid = 1;
+} else {
+    $clickid = 0;
+}
+if ($bot1[$id] <= 0) {
+    for ($i1 = 1; $i1 <= 10; $i1++) {
+        $sql6 =
+            "UPDATE game.perems,statsbots SET " .
+            $id .
+            " = hpb2 where botid=idbot and login='$name'";
+        mysqli_query($link, $sql6);
+    }
+    $sql3 = "UPDATE game.perems,statsbots SET exp1 = exp1+rewardexp where botid=idbot and login='$name'";
+    mysqli_query($link, $sql3);
+    $sql4 = "UPDATE game.perems,statsbots SET rouble = rouble+rewardrouble where botid=idbot and login='$name'";
+    mysqli_query($link, $sql4);
+    $sql5 = "UPDATE game.perems,statsbots SET dollar = dollar+rewarddollar where botid=idbot and login='$name'";
+    mysqli_query($link, $sql5);
+}
+$bots = get_bots($link);
+foreach ($bots as $bot) {
+}
+if ($bot[exp1] >= $bot[needexp]) {
+    $sql15 = "UPDATE game.perems,statsbots SET rank = rank+1 where login='$name'";
+    mysqli_query($link, $sql15);
+    $sql16 = "UPDATE game.perems,statsbots SET exp1 = 0 where login='$name'";
+    mysqli_query($link, $sql16);
+}
+if ($bot1[hp1] <= 0) {
+    $defeat = 1;
+    for ($j = 1; $j <= 10; $j++) {
+        $id1 = "hpbot" . $j;
+        $sql7 =
+            "UPDATE game.statsbots,perems SET " .
+            $id1 .
+            " = hpb2 where idbot='$j' and login='$name'";
+        mysqli_query($link, $sql7);
+    }
+    $sql8 = "UPDATE game.statsbots,perems SET hp1 = 100 where login='$name'";
+    mysqli_query($link, $sql8);
+    $sql9 = "UPDATE game.perems,statsbots SET exp1 = 0 where login='$name'";
+    mysqli_query($link, $sql9);
+    $sql10 = "UPDATE game.perems,statsbots SET rouble = 0 where login='$name'";
+    mysqli_query($link, $sql10);
+    $sql11 = "UPDATE game.perems,statsbots SET dollar = 0 where login='$name'";
+    mysqli_query($link, $sql11);
+    $sql12 = "UPDATE game.perems,statsbots SET exp2 = 100 where login='$name'";
+    mysqli_query($link, $sql12);
+    $sql13 = "UPDATE game.perems SET rank = 1 where login='$name'";
+    mysqli_query($link, $sql13);
+}
+$bots = get_bots($link);
+foreach ($bots as $bot) {
+}
+echo $bot[$id] . "/" . $bot[hpb2]; //arr[0]
+echo "|" . $bot[hp1] . "/" . $bot[hp2];
+echo "|" . $bot[botid];
+echo "|" . $bot[exp1] . "/" . $bot[needexp];
+echo "|" . $bot[rouble];
+echo "|" . $bot[dollar];
+echo "|" . $defeat;
+echo "|" . $clickid;
+echo "|" . $bot[rank];
+echo "|" . $bot[rankname]; //arr[9]
+?>
